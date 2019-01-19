@@ -1,60 +1,57 @@
 package main
 
 import (
-  "database/sql"
-  "fmt"
-  _ "github.com/go-sql-driver/mysql"
+	"encoding/json"
+	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 )
 
 type Wine struct {
-  Id int
-  Country string
-  Description string
-  Designation string
-  Points int
-  Price int
-  Province string
-  Region1 string
-  Region2 string
-  Title string
-  Variety string
-  Winery string
+	ID          int    `db:"id" json:"id"`
+	Country     string `db:"country" json:"country"`
+	Description string `db:"description" json:"description"`
+	Designation string `db:"designation" json:"designation"`
+	Points      int    `db:"points" json:"points"`
+	Price       int    `db:"price" json:"price"`
+	Province    string `db:"province" json:"province"`
+	Region1     string `db:"region1" json:"region1"`
+	Region2     string `db:"region2" json:"region2"`
+	Title       string `db:"title" json:"title"`
+	Variety     string `db:"variety" json:"variety"`
+	Winery      string `db:"winery" json:"winery"`
 }
 
+var Db *sqlx.DB
+
 func main() {
-  db, err := sql.Open("mysql", "jordan:1234@tcp(127.0.0.1:3306)/WineApp")
-  if err != nil {
-    panic(err)
-  }
-  defer db.Close()
+	var err error
+	Db, err = sqlx.Open("mysql", "jordan:1234@tcp(127.0.0.1:3306)/WineApp")
+	if err != nil {
+		panic(err)
+	}
+	defer Db.Close()
 
-  rows, err := db.Query("SELECT * FROM wine WHERE country='Canada'")
-  if err != nil {
-    panic(err)
-  }
-  defer rows.Close()
+	r := mux.NewRouter()
 
-  for rows.Next() {
-    wine := Wine{}
-    err = rows.Scan(&wine.Id,
-      &wine.Country,
-      &wine.Description,
-      &wine.Designation,
-      &wine.Points,
-      &wine.Price,
-      &wine.Region1,
-      &wine.Region2,
-      &wine.Title,
-      &wine.Variety,
-      &wine.Winery)
-    if err != nil {
-      panic(err)
-    }
-    fmt.Println(wine)
-  }
-  err = rows.Err()
-  if err != nil {
-    panic(err)
-  }
+	r.HandleFunc("/api/countries/", getCountryList).Methods("GET")
 
+	http.ListenAndServe("8888", r)
+
+}
+
+func getCountryList(w http.ResponseWriter, r *http.Request) {
+	q := `PUT THE DB CALL IN HERE`
+
+	countries := []Wine{}
+
+	if err := Db.Select(&countries, q); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	encoder := json.NewEncoder(w)
+	encoder.Encode(countries)
 }
