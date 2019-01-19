@@ -16,21 +16,19 @@ type Wine struct {
   Province string
   Region1 string
   Region2 string
-  TasterName string
-  TasterTwitterHandle string
   Title string
   Variety string
   Winery string
 }
 
 func main() {
-  db, err := sql.Open("mysql", "theUser: thePassword@/theDbName")
+  db, err := sql.Open("mysql", "jordan:1234@tcp(127.0.0.1:3306)/WineApp")
   if err != nil {
     panic(err)
   }
   defer db.Close()
 
-  rows, err := db.Query("SELECT ...")
+  rows, err := db.Query("SELECT * FROM wine WHERE country='Canada'")
   if err != nil {
     panic(err)
   }
@@ -46,8 +44,6 @@ func main() {
       &wine.Price,
       &wine.Region1,
       &wine.Region2,
-      &wine.TasterName,
-      &wine.TasterTwitterHandle,
       &wine.Title,
       &wine.Variety,
       &wine.Winery)
