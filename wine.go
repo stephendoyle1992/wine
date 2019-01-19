@@ -4,6 +4,7 @@ import (
   "database/sql"
   "fmt"
   _ "github.com/go-sql-driver/mysql"
+  _ "github.com/gorilla/mux"
 )
 
 type Wine struct {
@@ -20,15 +21,23 @@ type Wine struct {
   Variety string
   Winery string
 }
+var Db *sql.DB
+
+func getCountry(Db){
+
+
+}
 
 func main() {
-  db, err := sql.Open("mysql", "jordan:1234@tcp(127.0.0.1:3306)/WineApp")
+  var err error
+  Db , err = sql.Open("mysql", "jordan:1234@tcp(127.0.0.1:3306)/WineApp")
+  rout := mux.NewRouter()
   if err != nil {
     panic(err)
   }
-  defer db.Close()
+  defer Db.Close()
 
-  rows, err := db.Query("SELECT * FROM wine WHERE country='Canada'")
+  rows, err := Db.Query("SELECT * FROM wine WHERE country='Canada'")
   if err != nil {
     panic(err)
   }
