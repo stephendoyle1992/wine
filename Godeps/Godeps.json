@@ -4,11 +4,6 @@
 	"GodepVersion": "v80",
 	"Deps": [
 		{
-			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.3-54-gbc14601",
-			"Rev": "bc14601d1bd56421dd60f561e6052c9ed77f9daf"
-		},
-		{
 			"ImportPath": "github.com/gorilla/mux",
 			"Comment": "v1.6.1-4-g69dae3b",
 			"Rev": "69dae3b874ba34bcaa563d5e5b1680334bfd9b73"
@@ -22,6 +17,16 @@
 			"ImportPath": "github.com/jmoiron/sqlx/reflectx",
 			"Comment": "sqlx-v1.1-130-gde86474",
 			"Rev": "de8647470aafe4854c976707c431dbe1eb2822c6"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Comment": "go1.0-cutoff-195-g83612a5",
+			"Rev": "83612a56d3dd153a94a629cd64925371c9adad78"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/oid",
+			"Comment": "go1.0-cutoff-195-g83612a5",
+			"Rev": "83612a56d3dd153a94a629cd64925371c9adad78"
 		}
 	]
 }
