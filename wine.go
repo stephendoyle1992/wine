@@ -187,7 +187,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	q+= `limit 100`
 
 	fmt.Println(q)
-	}
+	
 	wines := []Wine{}
 
 	if err := Db.Select(&wines, q, args...); err != nil {
