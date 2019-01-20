@@ -171,6 +171,8 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 				q += ` ORDER BY price`
 			}
 		}
+
+	q+= `limit 100`
 	}
 	wines := []Wine{}
 
