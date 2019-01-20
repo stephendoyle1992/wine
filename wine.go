@@ -137,17 +137,17 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	} */
 
 	if qvals["type"][0] == "white" {
-		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
-		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' 
-		OR variety LIKE 'riesling' OR variety LIKE 'pinot gris' 
+		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho'
+		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay'
+		OR variety LIKE 'riesling' OR variety LIKE 'pinot gris'
 		OR variety LIKE	'pinot grigio' or variety LIKE 'white blend'
 		 or variety LIKE 'Moscato'or variety LIKE 'Muscat' or variety LIKE 'semillion'
 		  or variety LIKE 'viognier' or variety like'Gewürztraminer' or variety like 'Pinot Bianco' )`
 	} else {
 
-		q += ` AND variety not in (select variety from Wine where variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
-		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' 
-		OR variety LIKE 'riesling' OR variety LIKE 'pinot gris' 
+		q += ` AND variety not in (select variety from Wine where variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho'
+		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay'
+		OR variety LIKE 'riesling' OR variety LIKE 'pinot gris'
 		OR variety LIKE	'pinot grigio' or variety LIKE 'white blend'
 		 or variety LIKE 'Moscato'or variety LIKE 'Muscat' or variety LIKE 'semillion'
 		  or variety LIKE 'viognier' or variety like'Gewürztraminer' or variety like 'Pinot Bianco' )`
@@ -180,15 +180,13 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			if qvals["sorting"][0] == "value" {
 				q += ` ORDER BY (points+1/price+1)`
 			} else if qvals["sorting"][0] == "points" {
-				q += ` ORDER BY points`
+				q += ` ORDER BY points DESC`
 			} else if qvals["sorting"][0] == "cheap" {
 				q += ` ORDER BY price`
 			}
 
 		}
 	}
-
-	q += ` limit 5`
 
 	q += ` limit 5`
 
