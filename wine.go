@@ -130,8 +130,8 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	} else {
 		args = append(args, 10000000000000)
 	}
-	if qvals["status"] != nil {
-		args = append(args, qvals["status"][0])
+	if qvals["sorting"] != nil {
+		args = append(args, qvals["sorting"][0])
 	}
 
 	if qvals["type"][0] == "white" {
@@ -172,19 +172,19 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			fieldVal++
 		}
 	}
-	if qvals["status"] != nil {
-		if qvals["status"][0] != "any" {
-			if qvals["status"][0] == "value" {
+	if qvals["sorting"] != nil {
+		if qvals["sorting"][0] != "any" {
+			if qvals["sorting"][0] == "value" {
 				q += ` ORDER BY (points+1/price+1)`
-			} else if qvals["status"][0] == "points" {
+			} else if qvals["sorting"][0] == "points" {
 				q += ` ORDER BY points`
-			} else if qvals["status"][0] == "cheap" {
+			} else if qvals["sorting"][0] == "cheap" {
 				q += ` ORDER BY price`
 			}
 		}
 	}
 
-	q+= ` limit 100`
+	//q += ` limit 100`
 
 	fmt.Println(q)
 	
