@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 	//_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 type Wine struct {
@@ -47,7 +47,7 @@ func main() {
 	r.HandleFunc("/api/variety/", getVarietyList).Methods("GET")
 	r.HandleFunc("/api/{countries}/region1/", getRegion1).Methods("GET")
 
-	err = http.ListenAndServe(":8888", r)
+	err = http.ListenAndServe(":"+os.Getenv("PORT"), r)
 	fmt.Println(err)
 }
 
