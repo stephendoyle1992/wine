@@ -79,7 +79,6 @@ func getVarietyList(w http.ResponseWriter, r *http.Request) {
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(varieties)
-
 }
 func getRegion1(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -127,13 +126,11 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	if qvals["price"] != nil {
 		args = append(args, qvals["price"][0])
 	} else {
 		args = append(args, 10000000000000)
-	}
-	if qvals["status"] != nil {
-		args = append(args, qvals["status"][0])
 	}
 
 	if qvals["type"][0] == "white" {
@@ -158,7 +155,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			q += ` AND COUNTRY = ($` + strconv.Itoa(fieldVal) + `)`
 			args = append(args, qvals["country"][0])
 			fieldVal++
-		}
+		} 
 	}
 	if qvals["region"] != nil {
 		if qvals["region"][0] != "any" {
@@ -174,30 +171,23 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			fieldVal++
 		}
 	}
-	if qvals["status"] != nil {
-		if qvals["status"][0] != "any" {
-			if qvals["status"][0] == "value" {
+	if qvals["sorting"] != nil {
+		if qvals["sorting"][0] != "any" {
+
+			if qvals["sorting"][0] == "value" {
 				q += ` ORDER BY (points+1/price+1)`
-			} else if qvals["status"][0] == "points" {
+			} else if qvals["sorting"][0] == "points" {
 				q += ` ORDER BY points`
-			} else if qvals["status"][0] == "cheap" {
+			} else if qvals["sorting"][0] == "cheap" {
 				q += ` ORDER BY price`
 			}
 		}
 	}
+	
+	q += ` limit 5`
 
 	fmt.Println(q)
-	if qvals["status"] != nil {
-		if qvals["status"][0] != "any" {
-			if qvals["status"][0] == "value" {
-				q += ` ORDER BY (points+1/price+1)`
-			} else if qvals["status"][0] == "points" {
-				q += ` ORDER BY points`
-			} else if qvals["status"][0] == "cheap" {
-				q += ` ORDER BY price`
-			}
-		}
-	}
+
 	wines := []Wine{}
 
 	if err := Db.Select(&wines, q, args...); err != nil {
