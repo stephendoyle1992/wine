@@ -15,18 +15,20 @@ import (
 )
 
 type Wine struct {
-	ID          int            `db:"id" json:"id"`
-	Country     sql.NullString `db:"country" json:"country"`
-	Description sql.NullString `db:"description" json:"description"`
-	Designation sql.NullString `db:"designation" json:"designation"`
-	Points      sql.NullInt64  `db:"points" json:"points"`
-	Price       sql.NullInt64  `db:"price" json:"price"`
-	Province    sql.NullString `db:"province" json:"province"`
-	Region1     sql.NullString `db:"region1" json:"region1"`
-	Region2     sql.NullString `db:"region2" json:"region2"`
-	Title       sql.NullString `db:"title" json:"title"`
-	Variety     sql.NullString `db:"variety" json:"variety"`
-	Winery      sql.NullString `db:"winery" json:"winery"`
+	ID            int            `db:"id" json:"id"`
+	Country       sql.NullString `db:"country" json:"country"`
+	Description   sql.NullString `db:"description" json:"description"`
+	Designation   sql.NullString `db:"designation" json:"designation"`
+	Points        sql.NullInt64  `db:"points" json:"points"`
+	Price         sql.NullInt64  `db:"price" json:"price"`
+	Province      sql.NullString `db:"province" json:"province"`
+	Region1       sql.NullString `db:"region1" json:"region1"`
+	Region2       sql.NullString `db:"region2" json:"region2"`
+	Title         sql.NullString `db:"title" json:"title"`
+	Variety       sql.NullString `db:"variety" json:"variety"`
+	Winery        sql.NullString `db:"winery" json:"winery"`
+	TasterName    sql.NullString `db:"taster_name" json:"tasterName"`
+	TasterTwitter sql.NullString `db:"taster_twitter_handle" json:"tasterTwitterHandle"`
 }
 
 var Db *sqlx.DB
