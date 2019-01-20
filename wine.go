@@ -178,7 +178,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-
+	fmt.Println(q)
 	wines := []Wine{}
 
 	if err := Db.Select(&wines, q, args...); err != nil {
