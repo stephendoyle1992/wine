@@ -184,7 +184,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	q+= `limit 100`
+	q+= ` limit 100`
 
 	fmt.Println(q)
 	
