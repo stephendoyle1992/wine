@@ -130,9 +130,9 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	} else {
 		args = append(args, 10000000000000)
 	}
-	if qvals["sorting"] != nil {
+/* 	if qvals["sorting"] != nil {
 		args = append(args, qvals["sorting"][0])
-	}
+	} */
 
 	if qvals["type"][0] == "white" {
 		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
