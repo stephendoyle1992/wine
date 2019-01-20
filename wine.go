@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -46,12 +47,20 @@ func main() {
 
 	r.HandleFunc("/api/countries/", getCountryList).Methods("GET")
 	r.HandleFunc("/api/wines/", getWines).Methods("GET")
+	r.HandleFunc("/api/wines/webhook/", webHook).Methods("POST")
 	r.HandleFunc("/api/variety/", getVarietyList).Methods("GET")
 	r.HandleFunc("/api/{countries}/region1/", getRegion1).Methods("GET")
 
 	err = http.ListenAndServe(":"+os.Getenv("PORT"), r)
 	//err = http.ListenAndServe(":8888", r)
 	fmt.Println(err)
+}
+
+func webHook(w http.ResponseWriter, r *http.Request) {
+	data, _ := ioutil.ReadAll(r.Body)
+	fmt.Println(string(data))
+	fmt.Println(r.Header)
+	fmt.Println(r.Host)
 }
 
 func getVarietyList(w http.ResponseWriter, r *http.Request) {
@@ -121,6 +130,9 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	} else {
 		args = append(args, 10000000000000)
 	}
+	if qvals["status"] != nil {
+		args = append(args, qvals["status"][0])
+	}
 
 	if qvals["type"][0] == "white" {
 		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
@@ -160,13 +172,25 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			fieldVal++
 		}
 	}
-
 	if qvals["status"] != nil {
 		if qvals["status"][0] != "any" {
 			if qvals["status"][0] == "value" {
 				q += ` ORDER BY (points+1/price+1)`
 			} else if qvals["status"][0] == "points" {
-				q += ` ORDER BY points` 
+				q += ` ORDER BY points`
+			} else if qvals["status"][0] == "cheap" {
+				q += ` ORDER BY price`
+			}
+		}
+	}
+
+	fmt.Println(q)
+	if qvals["status"] != nil {
+		if qvals["status"][0] != "any" {
+			if qvals["status"][0] == "value" {
+				q += ` ORDER BY (points+1/price+1)`
+			} else if qvals["status"][0] == "points" {
+				q += ` ORDER BY points`
 			} else if qvals["status"][0] == "cheap" {
 				q += ` ORDER BY price`
 			}
@@ -181,7 +205,6 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(wines)
