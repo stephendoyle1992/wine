@@ -132,6 +132,9 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	} else {
 		args = append(args, 10000000000000)
 	}
+	/* 	if qvals["sorting"] != nil {
+		args = append(args, qvals["sorting"][0])
+	} */
 
 	if qvals["type"][0] == "white" {
 		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
@@ -155,7 +158,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			q += ` AND COUNTRY = ($` + strconv.Itoa(fieldVal) + `)`
 			args = append(args, qvals["country"][0])
 			fieldVal++
-		} 
+		}
 	}
 	if qvals["region"] != nil {
 		if qvals["region"][0] != "any" {
@@ -181,13 +184,17 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			} else if qvals["sorting"][0] == "cheap" {
 				q += ` ORDER BY price`
 			}
+
 		}
 	}
-	
+
+	q += ` limit 5`
+
 	q += ` limit 5`
 
 	fmt.Println(q)
 
+	fmt.Println(args)
 	wines := []Wine{}
 
 	if err := Db.Select(&wines, q, args...); err != nil {
