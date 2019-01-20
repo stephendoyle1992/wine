@@ -19,8 +19,8 @@ type Wine struct {
 	Points      sql.NullInt64 `db:"points" json:"points"`
 	Price       sql.NullInt64 `db:"price" json:"price"`
 	Province    string        `db:"province" json:"province"`
-	Region1     string        `db:"region_1" json:"region1"`
-	Region2     string        `db:"region_2" json:"region2"`
+	Region1     string        `db:"region1" json:"region1"`
+	Region2     string        `db:"region2" json:"region2"`
 	Title       string        `db:"title" json:"title"`
 	Variety     string        `db:"variety" json:"variety"`
 	Winery      string        `db:"winery" json:"winery"`
@@ -30,7 +30,7 @@ var Db *sqlx.DB
 
 func main() {
 	var err error
-	Db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/WineApp")
+	Db, err = sqlx.Open("mysql", "jordan:1234@tcp(127.0.0.1:3306)/WineApp")
 	if err != nil {
 		panic(err)
 	}
@@ -115,14 +115,19 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if qvals["type"][0] == "white" {
-		q += ` AND (variety LIKE 'sauvignon blanc' OR variety
-		LIKE 'verdelho' OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' OR
-		variety LIKE 'riesling' OR variety LIKE 'pinot gris' OR variety LIKE
-		'pinot grigio' or variety LIKE 'white blend')`
+		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
+		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' 
+		OR variety LIKE 'riesling' OR variety LIKE 'pinot gris' 
+		OR variety LIKE	'pinot grigio' or variety LIKE 'white blend'
+		 or variety LIKE 'Moscato'or variety LIKE 'Muscat' or variety LIKE 'semillion'
+		  or variety LIKE 'viognier' or variety like'Gewürztraminer' or variety like 'Pinot Bianco' )`
 	} else {
-		q += ` AND (variety LIKE 'carbenet sauvignon' OR variety LIKE 'shiraz'
-		OR variety LIKE 'merlot' OR variety LIKE  'pinot noir' 
-		OR variety LIKE 'grenache' OR variety LIKE 'red blend')`
+		q += ` AND variety not in (select variety from Wine where variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
+		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' 
+		OR variety LIKE 'riesling' OR variety LIKE 'pinot gris' 
+		OR variety LIKE	'pinot grigio' or variety LIKE 'white blend'
+		 or variety LIKE 'Moscato'or variety LIKE 'Muscat' or variety LIKE 'semillion'
+		  or variety LIKE 'viognier' or variety like'Gewürztraminer' or variety like 'Pinot Bianco' )`
 	}
 
 	if qvals["country"] != nil {
