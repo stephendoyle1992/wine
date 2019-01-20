@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	_ "github.com/go-sql-driver/mysql"
+	"os"
+	//_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )
@@ -30,7 +31,8 @@ var Db *sqlx.DB
 
 func main() {
 	var err error
-	Db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/WineApp")
+	//Db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/WineApp")
+	Db, err = sqlx.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
 	}
@@ -121,7 +123,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		'pinot grigio' or variety LIKE 'white blend')`
 	} else {
 		q += ` AND (variety LIKE 'carbenet sauvignon' OR variety LIKE 'shiraz'
-		OR variety LIKE 'merlot' OR variety LIKE  'pinot noir' 
+		OR variety LIKE 'merlot' OR variety LIKE  'pinot noir'
 		OR variety LIKE 'grenache' OR variety LIKE 'red blend')`
 	}
 
