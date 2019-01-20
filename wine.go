@@ -6,25 +6,26 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	//_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 type Wine struct {
-	ID          int           `db:"id" json:"id"`
-	Country     string        `db:"country" json:"country"`
-	Description string        `db:"description" json:"description"`
-	Designation string        `db:"designation" json:"designation"`
-	Points      sql.NullInt64 `db:"points" json:"points"`
-	Price       sql.NullInt64 `db:"price" json:"price"`
-	Province    string        `db:"province" json:"province"`
-	Region1     string        `db:"region1" json:"region1"`
-	Region2     string        `db:"region2" json:"region2"`
-	Title       string        `db:"title" json:"title"`
-	Variety     string        `db:"variety" json:"variety"`
-	Winery      string        `db:"winery" json:"winery"`
+	ID          int            `db:"id" json:"id"`
+	Country     sql.NullString `db:"country" json:"country"`
+	Description sql.NullString `db:"description" json:"description"`
+	Designation sql.NullString `db:"designation" json:"designation"`
+	Points      sql.NullInt64  `db:"points" json:"points"`
+	Price       sql.NullInt64  `db:"price" json:"price"`
+	Province    sql.NullString `db:"province" json:"province"`
+	Region1     sql.NullString `db:"region1" json:"region1"`
+	Region2     sql.NullString `db:"region2" json:"region2"`
+	Title       sql.NullString `db:"title" json:"title"`
+	Variety     sql.NullString `db:"variety" json:"variety"`
+	Winery      sql.NullString `db:"winery" json:"winery"`
 }
 
 var Db *sqlx.DB
@@ -34,6 +35,7 @@ func main() {
 
 	//Db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/WineApp")
 	Db, err = sqlx.Open("postgres", os.Getenv("DATABASE_URL"))
+	//Db, err = sqlx.Open("postgres", "user=postgres dbname=postgres port=5432 sslmode=disable")
 
 	if err != nil {
 		panic(err)
@@ -47,7 +49,8 @@ func main() {
 	r.HandleFunc("/api/variety/", getVarietyList).Methods("GET")
 	r.HandleFunc("/api/{countries}/region1/", getRegion1).Methods("GET")
 
-	err = http.ListenAndServe(":8888", r)
+	err = http.ListenAndServe(":"+os.Getenv("PORT"), r)
+	//err = http.ListenAndServe(":8888", r)
 	fmt.Println(err)
 }
 
@@ -72,7 +75,7 @@ func getRegion1(w http.ResponseWriter, r *http.Request) {
 	countries := vars["countries"]
 	fmt.Println(countries)
 	regions := []Wine{}
-	q := `SELECT distinct region1 FROM Wine WHERE country=?`
+	q := `SELECT distinct region1 FROM Wine WHERE country=($1)`
 
 	if err := Db.Select(&regions, q, countries); err != nil {
 		fmt.Println(err)
@@ -104,8 +107,9 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	qvals := r.URL.Query()
 
 	var args []interface{}
+	fieldVal := 2
 
-	q := `SELECT * FROM wine WHERE PRICE <= ?`
+	q := `SELECT * FROM wine WHERE PRICE <= ($1)`
 
 	if qvals["type"] == nil {
 		fmt.Println("type missing")
@@ -141,20 +145,23 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 
 	if qvals["country"] != nil {
 		if qvals["country"][0] != "any" {
-			q += ` AND COUNTRY = ?`
+			q += ` AND COUNTRY = ($` + strconv.Itoa(fieldVal) + `)`
 			args = append(args, qvals["country"][0])
+			fieldVal++
 		}
 	}
 	if qvals["region"] != nil {
 		if qvals["region"][0] != "any" {
-			q += ` AND REGION = ?`
+			q += ` AND REGION = ($` + strconv.Itoa(fieldVal) + `)`
 			args = append(args, qvals["region"][0])
+			fieldVal++
 		}
 	}
 	if qvals["variety"] != nil {
 		if qvals["variety"][0] != "any" {
-			q += ` AND REGION = ?`
+			q += ` AND REGION = ($` + strconv.Itoa(fieldVal) + `)`
 			args = append(args, qvals["variety"][0])
+			fieldVal++
 		}
 	}
 	if qvals["status"] != nil {
