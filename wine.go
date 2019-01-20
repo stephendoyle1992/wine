@@ -47,7 +47,7 @@ func main() {
 
 	r.HandleFunc("/api/countries/", getCountryList).Methods("GET")
 	r.HandleFunc("/api/wines/", getWines).Methods("GET")
-	r.HandleFunc("/api/wines/webhook", webHook).Methods("POST")
+	r.HandleFunc("/api/wines/webhook/", webHook).Methods("POST")
 	r.HandleFunc("/api/variety/", getVarietyList).Methods("GET")
 	r.HandleFunc("/api/{countries}/region1/", getRegion1).Methods("GET")
 
