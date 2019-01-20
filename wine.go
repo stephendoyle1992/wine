@@ -180,8 +180,6 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 				q += ` ORDER BY points`
 			} else if qvals["status"][0] == "cheap" {
 				q += ` ORDER BY price`
-			} else {
-				break
 			}
 		}
 	}
