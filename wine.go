@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -46,12 +47,20 @@ func main() {
 
 	r.HandleFunc("/api/countries/", getCountryList).Methods("GET")
 	r.HandleFunc("/api/wines/", getWines).Methods("GET")
+	r.HandleFunc("/api/wines/webhook/", webHook).Methods("POST")
 	r.HandleFunc("/api/variety/", getVarietyList).Methods("GET")
 	r.HandleFunc("/api/{countries}/region1/", getRegion1).Methods("GET")
 
 	err = http.ListenAndServe(":"+os.Getenv("PORT"), r)
 	//err = http.ListenAndServe(":8888", r)
 	fmt.Println(err)
+}
+
+func webHook(w http.ResponseWriter, r *http.Request) {
+	data, _ := ioutil.ReadAll(r.Body)
+	fmt.Println(string(data))
+	fmt.Println(r.Header)
+	fmt.Println(r.Host)
 }
 
 func getVarietyList(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +77,6 @@ func getVarietyList(w http.ResponseWriter, r *http.Request) {
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(varieties)
-
 }
 func getRegion1(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -116,16 +124,13 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	if qvals["price"] != nil {
 		args = append(args, qvals["price"][0])
 	} else {
 		args = append(args, 10000000000000)
 	}
-	if qvals["status"] != nil {
-		args = append(args, qvals["status"][0])
-	} s
 
-	}
 	if qvals["type"][0] == "white" {
 		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
 		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' 
@@ -148,7 +153,11 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			q += ` AND COUNTRY = ($` + strconv.Itoa(fieldVal) + `)`
 			args = append(args, qvals["country"][0])
 			fieldVal++
+		} else{
+			country := getRandomCountry()
+
 		}
+
 	}
 	if qvals["region"] != nil {
 		if qvals["region"][0] != "any" {
@@ -164,21 +173,22 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			fieldVal++
 		}
 	}
-	if qvals["status"] != nil {
-		if qvals["status"][0] != "any" {
-			if qvals["status"][0] == "value" {
+	if qvals["sorting"] != nil {
+		if qvals["sorting"][0] != "any" {
+
+			if qvals["sorting"][0] == "value" {
 				q += ` ORDER BY (points+1/price+1)`
-			} else if qvals["status"][0] == "points" {
-				q += ` ORDER BY points` 
-			} else if qvals["status"][0] == "cheap" {
-				q += ` ORDER BY price`
-			} else {
-				break;
+			} else if qvals["sorting"][0] == "points" {
+				q += ` ORDER BY points`
+			} else if qvals["sorting"][0] == "cheap" {
+				q += ` ORDER BY cost`				
 			}
+
 		}
 	}
 
-	fmt.Println(q)
+	q += ` limit 5`
+
 	wines := []Wine{}
 
 	if err := Db.Select(&wines, q, args...); err != nil {
