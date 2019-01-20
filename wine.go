@@ -185,7 +185,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 				args = append(args, "price")
 			}*/
 			if qvals["sorting"][0] == "value" {
-				q += ` ORDER BY (price+1/cost+1)`
+				q += ` ORDER BY (points+1/price+1)`
 			}
 
 		}
