@@ -174,7 +174,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	}
 	if qvals["sorting"] != nil {
 		if qvals["sorting"][0] != "any" {
-			if qvals["sorting"][0] == "value" {
+			/*if qvals["sorting"][0] == "value" {
 				q += ` ORDER BY ($` + strconv.Itoa(fieldVal) + `)`
 				args = append(args, "points+1/price+1")
 			} else if qvals["sorting"][0] == "points" {
@@ -183,7 +183,11 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			} else if qvals["sorting"][0] == "cheap" {
 				q += ` ORDER BY($` + strconv.Itoa(fieldVal) + `)`
 				args = append(args, "price")
+			}*/
+			if qvals["sorting"][0] == "value" {
+				q += ` ORDER BY (price+1/cost+1)`
 			}
+
 		}
 	}
 
