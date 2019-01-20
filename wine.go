@@ -160,7 +160,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			fieldVal++
 		}
 	}
-	
+
 	if qvals["status"] != nil {
 		if qvals["status"][0] != "any" {
 			if qvals["status"][0] == "value" {
@@ -169,8 +169,6 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 				q += ` ORDER BY points` 
 			} else if qvals["status"][0] == "cheap" {
 				q += ` ORDER BY price`
-			} else {
-				break;
 			}
 		}
 	}
