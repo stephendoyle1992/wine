@@ -117,7 +117,11 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 	} else {
 		args = append(args, 10000000000000)
 	}
+	if qvals["status"] != nil {
+		args = append(args, qvals["status"][0])
+	} s
 
+	}
 	if qvals["type"][0] == "white" {
 		q += ` AND (variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
 		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' 
@@ -153,6 +157,20 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			args = append(args, qvals["variety"][0])
 		}
 	}
+	if qvals["status"] != nil {
+		if qvals["status"][0] != "any" {
+			if qvals["status"][0] == "value" {
+				q += ` ORDER BY (points+1/price+1)`
+			} else if qvals["status"][0] == "points" {
+				q += ` ORDER BY points` 
+			} else if qvals["status"][0] == "cheap" {
+				q += ` ORDER BY price`
+			} else {
+				break;
+			}
+		}
+	}
+
 
 	wines := []Wine{}
 
