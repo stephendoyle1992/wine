@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -46,12 +47,20 @@ func main() {
 
 	r.HandleFunc("/api/countries/", getCountryList).Methods("GET")
 	r.HandleFunc("/api/wines/", getWines).Methods("GET")
+	r.HandleFunc("/api/wines/webhook", webHook).Methods("POST")
 	r.HandleFunc("/api/variety/", getVarietyList).Methods("GET")
 	r.HandleFunc("/api/{countries}/region1/", getRegion1).Methods("GET")
 
 	err = http.ListenAndServe(":"+os.Getenv("PORT"), r)
 	//err = http.ListenAndServe(":8888", r)
 	fmt.Println(err)
+}
+
+func webHook(w http.ResponseWriter, r *http.Request) {
+	data, _ := ioutil.ReadAll(r.Body)
+	fmt.Println(string(data))
+	fmt.Println(r.Header)
+	fmt.Println(r.Host)
 }
 
 func getVarietyList(w http.ResponseWriter, r *http.Request) {
