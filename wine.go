@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	_ "github.com/go-sql-driver/mysql"
+	"os"
+	//_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )
@@ -30,7 +31,10 @@ var Db *sqlx.DB
 
 func main() {
 	var err error
-	Db, err = sqlx.Open("mysql", "jordan:1234@tcp(127.0.0.1:3306)/WineApp")
+
+	//Db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/WineApp")
+	Db, err = sqlx.Open("postgres", os.Getenv("DATABASE_URL"))
+
 	if err != nil {
 		panic(err)
 	}
@@ -122,6 +126,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		 or variety LIKE 'Moscato'or variety LIKE 'Muscat' or variety LIKE 'semillion'
 		  or variety LIKE 'viognier' or variety like'Gewürztraminer' or variety like 'Pinot Bianco' )`
 	} else {
+
 		q += ` AND variety not in (select variety from Wine where variety LIKE 'sauvignon blanc' OR variety LIKE 'verdelho' 
 		OR variety LIKE 'semillon' OR variety LIKE 'chardonnay' 
 		OR variety LIKE 'riesling' OR variety LIKE 'pinot gris' 
