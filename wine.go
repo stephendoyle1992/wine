@@ -160,7 +160,20 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			fieldVal++
 		}
 	}
-
+	
+	if qvals["status"] != nil {
+		if qvals["status"][0] != "any" {
+			if qvals["status"][0] == "value" {
+				q += ` ORDER BY (points+1/price+1)`
+			} else if qvals["status"][0] == "points" {
+				q += ` ORDER BY points` 
+			} else if qvals["status"][0] == "cheap" {
+				q += ` ORDER BY price`
+			} else {
+				break;
+			}
+		}
+	}
 	wines := []Wine{}
 
 	if err := Db.Select(&wines, q, args...); err != nil {
@@ -168,6 +181,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(wines)
