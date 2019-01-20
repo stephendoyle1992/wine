@@ -153,11 +153,7 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			q += ` AND COUNTRY = ($` + strconv.Itoa(fieldVal) + `)`
 			args = append(args, qvals["country"][0])
 			fieldVal++
-		} else{
-			country := getRandomCountry()
-
-		}
-
+		} 
 	}
 	if qvals["region"] != nil {
 		if qvals["region"][0] != "any" {
@@ -181,13 +177,14 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 			} else if qvals["sorting"][0] == "points" {
 				q += ` ORDER BY points`
 			} else if qvals["sorting"][0] == "cheap" {
-				q += ` ORDER BY cost`				
+				q += ` ORDER BY price`
 			}
-
 		}
 	}
-
+	
 	q += ` limit 5`
+
+	fmt.Println(q)
 
 	wines := []Wine{}
 
