@@ -190,8 +190,6 @@ func getWines(w http.ResponseWriter, r *http.Request) {
 
 	q += ` limit 5`
 
-	q += ` limit 5`
-
 	fmt.Println(q)
 
 	fmt.Println(args)
